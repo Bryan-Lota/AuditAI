@@ -127,7 +127,7 @@
         const out = [];
         const funcs = extractFunctions(lines);
         funcs.forEach(fn => {
-          const sigLine = lines[fn.start - 1] || '';
+          const sigLine = lines[(fn.signatureLine || fn.start) - 1] || '';
           if (fn.name === 'constructor') return;
           const hasModifier = /\b(onlyOwner|onlyAdmin|onlyRole|auth|whenNotPaused|nonReentrant)\b/.test(sigLine);
           const body = lines.slice(fn.start, fn.end + 1).join('\n');
@@ -192,7 +192,7 @@
         if (!oldSolc) return out;
         // Look for unchecked ops
         lines.forEach((line, i) => {
-          if (/^\s*[\w\[\]\.]+\s*[+\-*\/]=/.test(line) && !/SafeMath|using\s+SafeMath/.test(src)) {
+          if (/^\s*[A-Za-z_$][\w$]*(?:\s*\[[^;=]*\]|\.[A-Za-z_$][\w$]*)*\s*[+\-*\/]=/.test(line) && !/using\s+SafeMath\s+for/.test(src)) {
             if (!/\/\//.test(line.split(/[+\-*\/]=/)[0])) {
               out.push({
                 lines: [i + 1],
@@ -215,7 +215,7 @@
         const out = [];
         const funcs = extractFunctions(lines);
         funcs.forEach(fn => {
-          const sigLine = lines[fn.start - 1] || '';
+          const sigLine = lines[(fn.signatureLine || fn.start) - 1] || '';
           const addrMatch = sigLine.match(/address(?:\s+(?:memory|calldata|payable))?\s+(\w+)/);
           if (!addrMatch) return;
           if (/transferOwnership|set\w+|init/.test(fn.name) || /^transfer$/.test(fn.name) || /^mint$/.test(fn.name)) {
@@ -225,7 +225,7 @@
                              new RegExp(param + '\\s*!=\\s*address\\s*\\(\\s*0').test(body);
             if (!hasCheck) {
               out.push({
-                lines: [fn.start],
+                lines: [fn.signatureLine || fn.start],
                 location: fn.name + '(' + param + ')',
                 description: `\`${fn.name}\` does not validate that \`${param}\` is non-zero. Calling with the zero address may permanently lock state or burn value.`
               });
@@ -267,7 +267,7 @@
         const out = [];
         const funcs = extractFunctions(lines);
         funcs.forEach(fn => {
-          const sigLine = lines[fn.start - 1] || '';
+          const sigLine = lines[(fn.signatureLine || fn.start) - 1] || '';
           const body = lines.slice(fn.start, fn.end + 1).join('\n');
           if (/\b(selfdestruct|suicide)\s*\(/.test(body)) {
             const hasGuard = /\bonly\w+\b/.test(sigLine) ||
@@ -351,7 +351,7 @@
         if (opens > 0 && !started) { started = true; start = j + 1; }
         if (started && depth <= 0) { end = j; break; }
       }
-      if (start > 0 && end > 0) funcs.push({ name, start, end });
+      if (start > 0 && end > 0) funcs.push({ name, start, end, signatureLine: i + 1 });
     }
     return funcs;
   }

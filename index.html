@@ -1003,6 +1003,91 @@
   .stagger > *:nth-child(5) { animation-delay: 0.28s; }
   .stagger > *:nth-child(6) { animation-delay: 0.35s; }
 
+
+  /* Dependency-free renderer compatibility */
+  .workspace {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 360px;
+    gap: 28px;
+    align-items: start;
+  }
+  .editor-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 16px;
+    padding: 14px 16px;
+    border: 1px solid var(--rule);
+    border-bottom: 0;
+    background: var(--paper-2);
+  }
+  .editor-head .filename { font-weight: 600; }
+  .workspace .editor-pane {
+    border: 1px solid var(--rule);
+    background: #fbfaf5;
+    overflow: hidden;
+  }
+  .workspace .editor-textarea {
+    color: var(--ink);
+    background: #fbfaf5;
+    caret-color: var(--accent);
+    border-top: 1px solid var(--rule-faint);
+  }
+  .workspace .editor-textarea::selection { color: var(--ink); background: rgba(168, 52, 31, 0.18); }
+  .run-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 40px;
+    border: 1px solid var(--accent);
+    background: var(--accent);
+    color: white;
+    font: 600 12px 'Geist', system-ui, sans-serif;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    padding: 10px 14px;
+  }
+  .run-btn:hover { background: var(--accent-deep); border-color: var(--accent-deep); }
+  .run-btn.ghost { width: auto; background: transparent; color: var(--ink); border-color: var(--ink); }
+  .run-btn.ghost:hover { background: var(--ink); color: var(--paper); }
+  .pipe-step {
+    display: grid;
+    grid-template-columns: 56px 1fr;
+    gap: 16px;
+    padding: 18px 20px;
+    border-bottom: 1px solid var(--rule-faint);
+    background: var(--card);
+  }
+  .pipe-step:last-child { border-bottom: 0; }
+  .pipe-step.active { box-shadow: inset 3px 0 0 var(--accent); background: var(--accent-soft); }
+  .pipe-step.done { box-shadow: inset 3px 0 0 var(--ok); }
+  .pipe-num { font-family: 'Newsreader', Georgia, serif; font-size: 28px; color: var(--ink-faint); font-style: italic; }
+  .pipe-title { font-weight: 600; margin-bottom: 4px; }
+  .pipe-detail { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ink-dim); }
+  .report-hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 260px;
+    gap: 28px;
+    align-items: end;
+    padding-bottom: 22px;
+    border-bottom: 3px double var(--rule);
+    margin-bottom: 28px;
+  }
+  .report-hero h2 { font-size: 52px; line-height: 1; margin: 0 0 12px; font-weight: 500; }
+  .risk-card { border-left: 1px solid var(--rule); padding-left: 28px; text-align: right; }
+  .risk-card .lbl { font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-dim); }
+  .risk-card .risk { font-family: 'Newsreader', Georgia, serif; font-size: 36px; line-height: 1.05; }
+  .risk-card.crit .risk { color: var(--crit); }
+  .risk-card.high .risk { color: var(--high); }
+  .risk-card.med .risk { color: var(--med); }
+  .risk-card.low .risk { color: var(--low); }
+  .risk-card.ok .risk { color: var(--ok); }
+  @media (max-width: 980px) {
+    .workspace, .report-hero { grid-template-columns: 1fr; }
+  }
+
   @media print {
     body { background: white; }
     .masthead, .crumbs, .report-actions, .colophon { display: none; }
@@ -1014,16 +1099,8 @@
 <body>
 <div id="root"></div>
 
-<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
-<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
-<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
-
 <script src="contracts.js"></script>
 <script src="analyzer.js"></script>
-<script type="text/babel" src="syntax.jsx"></script>
-<script type="text/babel" src="editor.jsx"></script>
-<script type="text/babel" src="pipeline.jsx"></script>
-<script type="text/babel" src="report.jsx"></script>
-<script type="text/babel" src="app.jsx"></script>
+<script src="app.js"></script>
 </body>
 </html>
